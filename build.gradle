@@ -33,15 +33,21 @@ buildscript {
       }
     }
 
+    // if you want to disallow jcenter
+    if(project.properties['no.jcenter'] != 'true')
+    {
+      mavenRepo(url: 'http://jcenter.bintray.com')
+    }
+
     // if you want to disallow maven central
     if(project.properties['no.maven.central'] != 'true')
     {
-      mavenCentral()      
+      mavenCentral()
     }
   }
 
   dependencies {
-    classpath 'org.linkedin:org.linkedin.gradle-plugins:1.6.0'
+    classpath 'org.pongasoft:org.linkedin.gradle-plugins:1.7.0'
   }
 }
 
@@ -51,8 +57,6 @@ apply plugin: 'org.linkedin.spec'
 ext {
   topBuildDir = userConfig.top.build.dir ?: "${rootDir}/out/build"
 }
-
-apply plugin: 'org.linkedin.repository'
 
 allprojects {
   apply plugin: 'idea'
@@ -68,21 +72,19 @@ idea.project {
 }
 
 subprojects {
-  buildscript {
-    allRepositories.buildscript.configure(repositories)
-  }
+  apply plugin: 'org.linkedin.repository'
 
   apply plugin: 'java'
   apply plugin: 'maven'
-  
-  allRepositories.build.configure(repositories)
 
-  sourceCompatibility = '1.6'
-  targetCompatibility = '1.6'
+  allRepositories.build.configure()
+
+  sourceCompatibility = spec.jdk
+  targetCompatibility = spec.jdk
 
   buildDir = "${topBuildDir}${project.path.replace(':','/')}".toString()
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.4'
+  gradleVersion = '1.5'
 }

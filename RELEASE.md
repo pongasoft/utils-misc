@@ -1,3 +1,10 @@
+2.0.0 (2013/04/21)
+------------------
+* use of `jdk1.7` (now required)
+* use of `gradle 1.5`
+* publishing to [bintray](https://bintray.com/pkg/show/general/pongasoft/binaries/utils-misc) (jcenter)
+* forked project under [pongasoft/utils-misc](https://github.com/pongasoft/utils-misc)
+
 1.9.0 (2013/04/01)
 ------------------
 * implemented [ticket #11](https://github.com/linkedin/linkedin-utils/issues/11): _Upgrade to latest versions_

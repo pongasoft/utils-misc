@@ -7,7 +7,7 @@ Compilation
 ===========
 In order to compile the code you need
 
-* java 1.6
+* java 1.7+
 
 At the top simply run
 
@@ -36,7 +36,7 @@ for logging).
 
 Build configuration
 ===================
-The project uses the [`org.linkedin.userConfig`](https://github.com/linkedin/gradle-plugins/blob/master/README.md) plugin and as such can be configured
+The project uses the [`org.linkedin.userConfig`](https://github.com/pongasoft/gradle-plugins/blob/master/README.md) plugin and as such can be configured
 
     Example:
     ~/.userConfig.properties

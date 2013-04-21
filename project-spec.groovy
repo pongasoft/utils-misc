@@ -16,13 +16,14 @@
  */
 
 spec = [
-    name: 'linkedin-utils',
-    group: 'org.linkedin',
-    version: '1.9.0',
+    name: 'utils-misc',
+    group: 'org.pongasoft',
+    version: '2.0.0',
 
     versions: [
       groovy: '2.0.7',
       jackson: '2.1.4',
+      jdk: '1.7',
       slf4j: '1.6.2' // to be compatible with grails 2.2.1
     ],
 
@@ -53,3 +54,17 @@ spec.external = [
   slf4jLog4j: "org.slf4j:slf4j-log4j12:${spec.versions.slf4j}",
   slf4jJul: "org.slf4j:jul-to-slf4j:${spec.versions.slf4j}"
 ]
+
+// information about the bintray distribution
+spec.bintray = [
+  apiBaseUrl: 'https://bintray.com/api/v1',
+  username: 'yan',
+  pkgOrganization: 'pongasoft',
+  repositories: [
+    binaries: [
+      pkgRepository: 'binaries',
+      pkgName: spec.name
+    ],
+  ]
+]
+

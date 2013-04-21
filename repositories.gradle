@@ -34,12 +34,9 @@ allRepositories.build = {
   mavenRepo name: 'build-publish', url: topPublishDir.toURI()
 
   mavenCentral()
-}
 
-/**
- * Repositories for buildScript
- */
-allRepositories.buildscript = allRepositories.build
+  bintray.jcenter()
+}
 
 /**
  * Repositories for release
@@ -55,43 +52,45 @@ allRepositories.snapshotRelease = {
 
 allRepositories.release = allRepositories.snapshotRelease
 
-/**
- * Repositories for publish
- */
-allRepositories.snapshotPublish = {
-  mavenDeployer {
-    repository(url: "file://localhost${topPublishDir}")
-    pom.whenConfigured { pomToConfigure ->
-      pomToConfigure.project {
-        name project.name
-        description 'Set of utility classes used by other LinkedIn open source projects'
-        url 'http://github.com/linkedin/linkedin-utils'
-        licenses {
-          license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0'
-          }
-        }
-        developers {
-          developer {
-            id 'ypujante'
-            name 'Yan Pujante'
-            email 'yan@pongasoft.com'
-          }
-          developer {
-            id 'mdubey'
-            name 'Manish Dubey'
-            email 'mdubey@linkedin.com'
-          }
-        }
-        scm {
-          connection "scm:git:${spec.scmUrl}"
-          developerConnection "scm:git:${spec.scmUrl}"
-          url spec.scmUrl
-        }
+def pomConfig = { pomToConfigure ->
+  pomToConfigure.project {
+    name project.rootProject.name
+    description 'Miscellaneous utilities used by other projects'
+    url 'http://github.com/pongasoft/utils-misc'
+    licenses {
+      license {
+        name 'The Apache Software License, Version 2.0'
+        url 'http://www.apache.org/licenses/LICENSE-2.0'
       }
+    }
+    developers {
+      developer {
+        id 'ypujante'
+        name 'Yan Pujante'
+        email 'yan@pongasoft.com'
+      }
+    }
+    scm {
+      connection "scm:git:${spec.scmUrl}"
+      developerConnection "scm:git:${spec.scmUrl}"
+      url spec.scmUrl
     }
   }
 }
 
-allRepositories.publish = allRepositories.snapshotPublish
+/**
+ * Repositories for publish (snapshots are published locally)
+ */
+allRepositories.snapshotPublish = {
+  mavenDeployer {
+    repository(url: "file://localhost${topPublishDir}")
+    pom.whenConfigured(pomConfig)
+  }
+}
+
+/**
+ * Bintray binaries / maven style
+ */
+allRepositories.publish = bintray.binaries.mavenRepo {
+  pom.whenConfigured(pomConfig)
+}
