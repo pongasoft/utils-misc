@@ -37,7 +37,7 @@ spec = [
   ]
 ]
 
-spec.scmUrl = "git@github.com:linkedin/${spec.name}.git"
+spec.scmUrl = "git@github.com:pongasoft/${spec.name}.git"
 
 /**
  * External dependencies
