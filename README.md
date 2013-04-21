@@ -1,6 +1,6 @@
 Introduction
 ============
-The project represents a set of utility classes that are used by other LinkedIn open 
+The project represents a set of miscellaneous utility classes that are used by other open
 source projects.
 
 Compilation
