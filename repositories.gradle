@@ -23,12 +23,10 @@ def topPublishDir = new File(userConfig.top.publish.dir ?: "${topBuildDir}/publi
  * Repositories for build
  */
 allRepositories.build = {
-  add(new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
+  ivy {
     name = "build-release"
-    addIvyPattern "${topReleaseDir}/[organisation]/[module]/[revision]/[module]-[revision].ivy"
-    addArtifactPattern "${topReleaseDir}/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
-    m2compatible = true
-    checkmodified = true
+    url = topReleaseDir
+    layout 'maven'
   }
 
   mavenRepo name: 'build-publish', url: topPublishDir.toURI()
@@ -42,11 +40,10 @@ allRepositories.build = {
  * Repositories for release
  */
 allRepositories.snapshotRelease = {
-  add(new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
-    name = 'local-release'
-    addIvyPattern "${topReleaseDir}/[organisation]/[module]/[revision]/[module]-[revision].ivy"
-    addArtifactPattern "${topReleaseDir}/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
-    m2compatible = true
+  ivy {
+    name = "local-release"
+    url = topReleaseDir
+    layout 'maven'
   }
 }
 

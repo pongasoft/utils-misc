@@ -24,30 +24,27 @@ buildscript {
 
     if(project.hasProperty('ivy.buildscript.repository'))
     {
-      add(new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
-        name = "ivy.buildscript.repository"
-        addIvyPattern "${project.properties['ivy.buildscript.repository']}/[organisation]/[module]/[revision]/[module]-[revision].ivy"
-        addArtifactPattern "${project.properties['ivy.buildscript.repository']}/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
-        m2compatible = true
-        checkmodified = true
+      ivy {
+        url = new File(project.properties['ivy.buildscript.repository'])
+        layout 'maven'
       }
     }
 
-    // if you want to disallow jcenter
-    if(project.properties['no.jcenter'] != 'true')
-    {
-      mavenRepo(url: 'http://jcenter.bintray.com')
-    }
+   // if you want to disallow jcenter
+   if(project.properties['no.jcenter'] != 'true')
+   {
+     mavenRepo(url: 'http://jcenter.bintray.com')
+   }
 
-    // if you want to disallow maven central
-    if(project.properties['no.maven.central'] != 'true')
-    {
-      mavenCentral()
-    }
-  }
+   // if you want to disallow maven central
+   if(project.properties['no.maven.central'] != 'true')
+   {
+     mavenCentral()
+   }
+ }
 
   dependencies {
-    classpath 'org.pongasoft:org.linkedin.gradle-plugins:2.0.0'
+    classpath 'org.pongasoft:org.linkedin.gradle-plugins:2.1.0'
   }
 }
 
