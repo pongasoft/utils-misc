@@ -44,7 +44,7 @@ buildscript {
  }
 
   dependencies {
-    classpath 'org.pongasoft:org.linkedin.gradle-plugins:2.1.0'
+    classpath 'org.pongasoft:org.linkedin.gradle-plugins:2.2.0'
   }
 }
 
@@ -83,5 +83,5 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.5'
+  gradleVersion = '1.6'
 }
