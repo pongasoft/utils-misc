@@ -25,6 +25,8 @@ import org.linkedin.groovy.util.net.GroovyNetUtils
 import org.linkedin.groovy.util.ant.AntUtils
 import org.linkedin.groovy.util.lang.GroovyLangUtils
 
+import java.nio.file.Files
+
 /**
  * IO related utilities
  *
@@ -242,9 +244,10 @@ class GroovyIOUtils extends IOUtils
   static File mkdirs(File dir)
   {
     if(dir)
-      return AntUtils.mkdirs(dir)
-    else
-      return null
+    {
+      Files.createDirectories(dir.toPath())
+    }
+    return dir
   }
 
   /**

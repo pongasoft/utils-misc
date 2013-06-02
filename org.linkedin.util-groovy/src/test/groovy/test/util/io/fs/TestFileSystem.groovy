@@ -20,8 +20,8 @@ package test.util.io.fs
 
 import org.linkedin.groovy.util.io.fs.FileSystemImpl
 import org.linkedin.util.io.resource.Resource
-import org.linkedin.groovy.util.ant.AntUtils
-import org.linkedin.groovy.util.io.GroovyIOUtils
+
+import java.nio.file.NotDirectoryException
 
 /**
  * Test for FileSystem class
@@ -102,6 +102,8 @@ class TestFileSystem extends GroovyTestCase
       include(name: '**/*.txt')
       exclude(name: 'a/**/*.txt')
     }
+
+    assertEquals([test4, test3], files.file)
 
     files = fs.ls('a') {
       include(name: '**/*.txt')
@@ -188,64 +190,160 @@ class TestFileSystem extends GroovyTestCase
     // TODO MED YP:  add more tests...
   }
 
-  void testCopy()
+  /**
+   * In this test, 'from' is a file
+   */
+  void testCopyFile()
   {
-    def test1 = fs.saveContent('/a/b/c/d.txt', 'test1')
-    assertFalse(fs.toResource('/e/f.txt').exists())
-    def test2 = fs.cp(test1, '/e/f.txt')
-    assertEquals('/e/f.txt', test2.path)
+    // if 'from' file does not exist => error all the time
+    shouldFail(FileNotFoundException) { fs.cp('/a/b/c/d.txt', '/')}
+
+    def test1 = fs.saveContent('/a/b/c/test1.txt', 'test1')
+
+    // if 'to' file does not exist => create it
+    assertFalse(fs.toResource('/e/test2.txt').exists())
+    def test2 = fs.cp(test1, '/e/test2.txt')
+    assertEquals('/e/test2.txt', test2.path)
     assertEquals('test1', test2.file.getText())
 
-    // /e/g does not exist => file
-    def test3 = fs.cp(test1, '/e/g')
-    assertEquals('/e/g', test3.path)
-    assertEquals('test1', test3.file.getText())
+    // if 'to' file exist => overwrite it
+    assertEquals('test3', fs.saveContent('/e/test3.txt', 'test3').file.text)
+    def test3 = fs.cp(test1, '/e/test3.txt')
+    assertEquals('/e/test3.txt', test3.path)
+    assertEquals('test1', test3.file.getText()) // overwritten
 
-    // /e/h is a directory => copied into the directory
-    fs.mkdirs('/e/h')
-    def test4 = fs.cp(test1, '/e/h')
-    assertEquals('/e/h/d.txt', test4.path)
+    // if 'to' dir does not exist => error
+    shouldFail(FileNotFoundException) { fs.cp(test1, '/e/test4/') }
+
+    // if 'to' dir exists => copy file in dir
+    fs.mkdirs('/e/test4')
+    def test4 = fs.cp(test1, '/e/test4')
+    assertEquals('/e/test4/test1.txt', test4.path)
     assertEquals('test1', test4.file.getText())
-
-    // /e/i/ is a directory and does not exist
-    shouldFail(FileNotFoundException) { fs.cp(test1, '/e/i/') }
   }
 
-  void testMove()
+  /**
+   * In this test, 'from' is a dir
+   */
+  void testCopyDir()
   {
-    def test1 = fs.saveContent('/a/b/c/d.txt', 'test1')
-    assertFalse(fs.toResource('/e/f.txt').exists())
-    def test2 = fs.mv(test1, '/e/f.txt')
-    assertEquals('/e/f.txt', test2.path)
+    // if 'from' dir does not exist => error all the time
+    shouldFail(FileNotFoundException) { fs.cp('/a/b/c/', '/')}
+
+    fs.saveContent('/a/b/c/test1.txt', 'test1')
+    def b = fs.toResource('/a/b')
+    assertTrue(b.exists())
+    assertTrue(b.isDirectory())
+
+    // if 'to' does not exist => copy the entire content of the directory with the name of 'to'
+    def test2 = fs.cp(b, '/e')
+    assertEquals('/e', test2.path)
+    assertTrue(test2.isDirectory())
+    assertEquals('test1', test2.createRelative('/c/test1.txt').file.text)
+
+    // if 'to' dir exists => copy inside to
+    fs.mkdirs('/f')
+    def test3 = fs.cp(b, '/f')
+    assertEquals('/f/b', test3.path)
+    assertTrue(test3.isDirectory())
+    assertEquals('test1', test3.createRelative('/c/test1.txt').file.text)
+
+    // if 'to' file exists => error
+    fs.saveContent('g', 'g content')
+    shouldFail(NotDirectoryException) { fs.cp(b, 'g')}
+  }
+
+  /**
+   * In this test, 'from' is a file
+   */
+  void testMoveFile()
+  {
+    // if 'from' file does not exist => error all the time
+    shouldFail(FileNotFoundException) { fs.mv('/a/b/c/d.txt', '/')}
+
+    def test1 = fs.saveContent('/a/b/c/test1.txt', 'test1')
+
+    // if 'to' file does not exist => create it
+    assertFalse(fs.toResource('/e/test2.txt').exists())
+    def test2 = fs.mv(test1, '/e/test2.txt')
+    assertEquals('/e/test2.txt', test2.path)
     assertEquals('test1', test2.file.getText())
+
+    // restoring test1
     assertFalse(test1.exists())
+    fs.saveContent('/a/b/c/test1.txt', 'test1')
 
-    // /e/g does not exist => file
-    def test3 = fs.mv('/e/f.txt', '/e/g')
-    assertEquals('/e/g', test3.path)
-    assertEquals('test1', test3.file.getText())
-    assertFalse(test2.exists())
+    // if 'to' file exist => overwrite it
+    assertEquals('test3', fs.saveContent('/e/test3.txt', 'test3').file.text)
+    def test3 = fs.mv(test1, '/e/test3.txt')
+    assertEquals('/e/test3.txt', test3.path)
+    assertEquals('test1', test3.file.getText()) // overwritten
 
-    // /e/h is a directory => moved into the directory
-    fs.mkdirs('/e/h')
-    def test4 = fs.mv('/e/g', '/e/h')
-    assertEquals('/e/h/g', test4.path)
+    // restoring test1
+    assertFalse(test1.exists())
+    fs.saveContent('/a/b/c/test1.txt', 'test1')
+
+    // if 'to' dir does not exist => error
+    // mv foo6 foo7/
+    // mv: rename foo6 to foo7/: No such file or directory
+    shouldFail(FileNotFoundException) { fs.mv(test1, '/e/test4/') }
+    // should not have destroyed test1!
+    assertTrue(test1.exists())
+
+    // if 'to' dir exists => move file in dir
+    fs.mkdirs('/e/test4')
+    def test4 = fs.mv(test1, '/e/test4')
+    assertEquals('/e/test4/test1.txt', test4.path)
     assertEquals('test1', test4.file.getText())
-    assertFalse(test3.exists())
 
-    fs.saveContent('/e/j/i.txt', 'test2')
-    def testz = fs.mv('/e/j', '/e/z')
-    assertTrue(testz.'i.txt'.exists())
-    assertEquals('test2', fs.toResource('/e/z/i.txt').file.text)
-    assertFalse(fs.toResource('/e/j/i.txt').exists())
+    // restoring test1
+    assertFalse(test1.exists())
+    fs.saveContent('/a/b/c/test1.txt', 'test1')
+  }
 
-    // /e/i/ is a directory and does not exist
-    shouldFail(FileNotFoundException) { fs.mv('/e/h/g', '/e/i/') }
+  /**
+   * In this test, 'from' is a dir
+   */
+  void testMoveDir()
+  {
+    // if 'from' dir does not exist => error all the time
+    shouldFail(FileNotFoundException) { fs.mv('/a/b/c/', '/')}
 
-    def test5 = fs.mv('/e/h/g', '/e/i/d.txt')
-    assertEquals('/e/i/d.txt', test5.path)
-    assertEquals('test1', test5.file.getText())
-    assertFalse(test4.exists())
+    def test1 = fs.saveContent('/a/b/c/test1.txt', 'test1')
+    def b = fs.toResource('/a/b')
+    assertTrue(b.exists())
+    assertTrue(b.isDirectory())
+
+    // if 'to' does not exist => rename/move the entire content of the directory with the name of 'to'
+    def test2 = fs.mv(b, '/e')
+    assertEquals('/e', test2.path)
+    assertTrue(test2.isDirectory())
+    assertEquals('test1', test2.createRelative('/c/test1.txt').file.text)
+
+    // restoring test1
+    assertFalse(b.exists())
+    assertFalse(test1.exists())
+    fs.saveContent('/a/b/c/test1.txt', 'test1')
+
+    // if 'to' dir exists => copy inside to
+    fs.mkdirs('/f')
+    def test3 = fs.mv(b, '/f')
+    assertEquals('/f/b', test3.path)
+    assertTrue(test3.isDirectory())
+    assertEquals('test1', test3.createRelative('/c/test1.txt').file.text)
+
+    // restoring test1
+    assertFalse(b.exists())
+    assertFalse(test1.exists())
+    fs.saveContent('/a/b/c/test1.txt', 'test1')
+
+    // if 'to' file exists => error
+    // mv foo7 foo6
+    // mv: rename foo7 to foo6: Not a directory
+    fs.saveContent('g', 'g content')
+    shouldFail(NotDirectoryException) { fs.mv(b, 'g')}
+    // should not have destroyed test1!
+    assertTrue(test1.exists())
   }
 
   void testRmEmptyDirs()

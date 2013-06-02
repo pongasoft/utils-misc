@@ -24,6 +24,8 @@ import org.linkedin.util.io.resource.FileResource
 import org.linkedin.util.io.resource.Resource
 import org.linkedin.util.lifecycle.Destroyable
 
+import java.nio.file.NotDirectoryException
+
 /**
  * Represents methods available for the file system
  *
@@ -41,8 +43,8 @@ def class FileSystemImpl implements FileSystem, Destroyable
 
   FileSystemImpl(File rootDir, File tempDir)
   {
-    _root = toSerializableResource(FileResource.createFromRoot(AntUtils.mkdirs(rootDir)))
-    _tmpRoot = toSerializableResource(FileResource.createFromRoot(AntUtils.mkdirs(tempDir)))
+    _root = toSerializableResource(FileResource.createFromRoot(GroovyIOUtils.mkdirs(rootDir)))
+    _tmpRoot = toSerializableResource(FileResource.createFromRoot(GroovyIOUtils.mkdirs(tempDir)))
   }
 
   /**
@@ -76,7 +78,7 @@ def class FileSystemImpl implements FileSystem, Destroyable
   Resource mkdirs(dir)
   {
     Resource resource = toResource(dir)
-    AntUtils.mkdirs(resource.file)
+    GroovyIOUtils.mkdirs(resource.file)
     return resource
   }
 
@@ -305,33 +307,7 @@ def class FileSystemImpl implements FileSystem, Destroyable
    */
   Resource cp(from, to)
   {
-    def toIsDirectory = to.toString().endsWith('/')
-
-    from = toResource(from)
-
-    if(!from.exists())
-      throw new FileNotFoundException(from.toString())
-
-    to = toResource(to)
-
-    if(toIsDirectory && !to.exists())
-      throw new FileNotFoundException(to.toString())
-
-    if(to.isDirectory())
-    {
-      to = to.createRelative(from.filename)
-    }
-
-    mkdirs(to.parentResource)
-    
-    def copyArgs = [overwrite: true, file: from.file, tofile: to.file]
-
-
-    AntUtils.withBuilder { ant ->
-      ant.copy(copyArgs)
-    }
-
-    return to
+    copyOrMove(from, to, 'copy')
   }
 
   /**
@@ -341,29 +317,66 @@ def class FileSystemImpl implements FileSystem, Destroyable
    */
   Resource mv(from, to)
   {
-    def toIsDirectory = to.toString().endsWith('/')
+    copyOrMove(from, to, 'move')
+  }
 
+  /**
+   * Copy or move... same code except ant action
+   *
+   * @return to as a resource
+   */
+  Resource copyOrMove(from, to, antAction)
+  {
     from = toResource(from)
 
     if(!from.exists())
       throw new FileNotFoundException(from.toString())
 
+    def toIsDirectory = to.toString().endsWith('/')
     to = toResource(to)
+    toIsDirectory = toIsDirectory || to.isDirectory()
 
-    if(toIsDirectory && !to.exists())
-      throw new FileNotFoundException(to.toString())
-
-    if(to.isDirectory())
+    if(from.isDirectory())
     {
-      to = to.createRelative(from.filename)
+      // handle case when 'from' is a directory
+
+      // to is an existing file => error
+      // cp -R foo foo4
+      // cp: foo4: Not a directory
+      if(!toIsDirectory && to.exists())
+        throw new NotDirectoryException(to.toString())
+
+      // to is an existent directory => copy inside directory
+      if(toIsDirectory)
+        to = to.createRelative(from.filename)
+
+      mkdirs(to.parentResource)
+
+      AntUtils.withBuilder { ant ->
+        ant."${antAction}"(overwrite: true, todir: to.file) {
+          fileset(dir: from.file)
+        }
+      }
     }
+    else
+    {
+      // handle case when 'from' is a file
 
-    mkdirs(to.parentResource)
+      // to is a non existent directory => error
+      // cp foo4 foo8/
+      // cp: directory foo8 does not exist
+      if(toIsDirectory && !to.exists())
+        throw new FileNotFoundException(to.toString())
 
-    def moveArgs = [overwrite: true, file: from.file, tofile: to.file]
+      // to is an existent directory => copy inside directory
+      if(toIsDirectory)
+        to = to.createRelative(from.filename)
 
-    AntUtils.withBuilder { ant ->
-      ant.move(moveArgs)
+      mkdirs(to.parentResource)
+
+      AntUtils.withBuilder { ant ->
+        ant."${antAction}"(overwrite: true, file: from.file, tofile: to.file)
+      }
     }
 
     return to
@@ -444,7 +457,7 @@ def class FileSystemImpl implements FileSystem, Destroyable
 
     if(createParents)
     {
-      AntUtils.mkdirs(res.parentResource.file)
+      GroovyIOUtils.mkdirs(res.parentResource.file)
     }
 
     return toSerializableResource(res)

@@ -20,9 +20,7 @@ package org.linkedin.groovy.util.ant
 
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.BuildException
-import org.apache.tools.ant.RuntimeConfigurable
-import org.apache.tools.ant.Target
-import org.apache.tools.ant.Task
+import org.linkedin.groovy.util.io.GroovyIOUtils
 
 /**
  * Helper methods for ant
@@ -55,11 +53,12 @@ class AntUtils
 
   /**
    * Creates the directory and parents of the provided directory. Returns dir.
+   * @deprecated use {@link GroovyIOUtils#mkdirs(java.io.File)} instead
    */
+  @Deprecated
   static File mkdirs(File dir)
   {
-    AntUtils.withBuilder { ant -> ant.mkdir(dir: dir) }
-    return dir
+    GroovyIOUtils.mkdirs(dir)
   }
 
   /**
@@ -96,7 +95,7 @@ class AntUtils
     tempFile = new File(tempFile)
     if(args.createParents == null ? true : args.createParent)
     {
-      mkdirs(tempFile.parentFile)
+      GroovyIOUtils.mkdirs(tempFile.parentFile)
     }
     return tempFile
   }
