@@ -101,11 +101,7 @@ public class ThreadControl
         {
           ConcurrentUtils.awaitUntil(_unblockCondition, endTime);
         }
-        catch(InterruptedException e)
-        {
-          throw new RuntimeException(e);
-        }
-        catch(TimeoutException e)
+        catch(InterruptedException | TimeoutException e)
         {
           throw new RuntimeException(e);
         }
@@ -170,11 +166,7 @@ public class ThreadControl
       {
         waitForBlock(key);
       }
-      catch(InterruptedException e)
-      {
-        throw new RuntimeException(e);
-      }
-      catch(TimeoutException e)
+      catch(InterruptedException | TimeoutException e)
       {
         throw new RuntimeException(e);
       }
@@ -193,7 +185,7 @@ public class ThreadControl
    * Blocking call to wait for a thread to call <code>block</code>.
    *
    * @param key the key we are waiting for
-   * @throws TimeOutException
+   * @throws TimeoutException
    * @throws InterruptedException
    */
   public void waitForBlock(Object key) throws TimeoutException, InterruptedException
@@ -205,7 +197,7 @@ public class ThreadControl
    * Blocking call to wait for a thread to call <code>block</code>.
    *
    * @param key the key we are waiting for
-   * @throws TimeOutException
+   * @throws TimeoutException
    * @throws InterruptedException
    */
   public void waitForBlock(Object key, Timespan timeout) throws TimeoutException, InterruptedException

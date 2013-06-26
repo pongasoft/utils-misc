@@ -71,7 +71,7 @@ public class ThreadPerTaskExecutor implements Executor
    */
   public static <V> Future<V> execute(Callable<V> callable)
   {
-    FutureTask<V> futureTask = new FutureTask<V>(callable);
+    FutureTask<V> futureTask = new FutureTask<>(callable);
 
     new Thread(futureTask).start();
 

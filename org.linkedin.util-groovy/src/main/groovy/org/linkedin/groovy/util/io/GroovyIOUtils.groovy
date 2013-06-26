@@ -18,6 +18,9 @@
 
 package org.linkedin.groovy.util.io
 
+import org.linkedin.groovy.util.io.fs.SerializableFileResource
+import org.linkedin.util.io.resource.FileResource
+import org.linkedin.util.io.resource.RAMResource
 import org.linkedin.util.io.resource.Resource
 import org.linkedin.util.io.IOUtils
 import org.linkedin.util.io.PathUtils
@@ -89,7 +92,7 @@ class GroovyIOUtils extends IOUtils
 
     URI uri = GroovyNetUtils.toURI(s)
 
-    if(uri.scheme == 'file')
+    if(!uri.scheme || uri.scheme == 'file')
       return [file: new File(uri.path), tempStatus: false]
 
     // this is not a local file => make it local...
@@ -243,7 +246,7 @@ class GroovyIOUtils extends IOUtils
    */
   static File mkdirs(File dir)
   {
-    if(dir)
+    if(dir && !dir.exists())
     {
       Files.createDirectories(dir.toPath())
     }
@@ -377,6 +380,12 @@ class GroovyIOUtils extends IOUtils
    */
   static String cat(location) throws IOException
   {
+    if(location instanceof FileResource || location instanceof SerializableFileResource)
+      return location.file.text
+
+    if(location instanceof RAMResource)
+      return location.inputStream.text
+
     File tempFile = File.createTempFile('GroovyIOUtils.cat', '.txt')
 
     try

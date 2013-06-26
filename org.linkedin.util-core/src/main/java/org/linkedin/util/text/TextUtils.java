@@ -75,6 +75,103 @@ public class TextUtils
   }
 
   /**
+   * Takes a string and returns another string with printable
+   * characters. Eg : "abc\n" will return "abc\\n".
+   *
+   * @param s the original string
+   * @return the String modified */
+  public static String stringToString(String s)
+  {
+    return stringToString(s, (char) -1);
+  }
+
+  /**
+   * Takes a string and returns another string with printable
+   * characters. Eg : "abc\n" will return "abc\\n".
+   *
+   * @param s the original string
+   * @return the String modified */
+  public static String stringToString(String s, char quote)
+  {
+    if(s == null)
+      return null;
+    StringBuilder sb = new StringBuilder(s.length() + 8);
+    stringToString(sb, s, quote);
+    return sb.toString();
+  }
+
+  /**
+   * Takes a string appends it to a StringBuilder/Buffer with printable
+   * characters. Eg : "abc\n" will return "abc\\n".
+   *
+   * @param sb a StringBuilder to append to
+   * @param s the original string
+   * @param quote the quote used to surround the string (=> needs to be escaped)
+   * */
+  public static void stringToString(StringBuilder sb, String s, char quote)
+  {
+    if(s == null)
+      return;
+
+    sb.ensureCapacity(sb.length() + s.length() + 8);
+
+    for(int i = 0; i < s.length(); i++)
+    {
+      char c = s.charAt(i);
+
+      switch(c)
+      {
+        case '\b':
+          sb.append("\\b");
+          continue;
+
+        case '\t':
+          sb.append("\\t");
+          continue;
+
+        case '\n':
+          sb.append("\\n");
+          continue;
+
+        case '\f':
+          sb.append("\\f");
+          continue;
+
+        case '\r':
+          sb.append("\\r");
+          continue;
+
+        case '\"':
+          if(c == quote)
+            sb.append("\\\"");
+          else
+            sb.append(c);
+          continue;
+
+        case '\'':
+          if(c == quote)
+            sb.append("\\\'");
+          else
+            sb.append(c);
+          continue;
+
+        case '\\':
+          sb.append("\\\\");
+          continue;
+
+        default:
+          if(c < 0x20 || c > 0x7e)
+          {
+            String unicode = "0000" + Integer.toString(c, 16);
+            sb.append("\\u").append(unicode.substring(unicode.length() - 4));
+          }
+          else
+            sb.append(c);
+      }
+    }
+  }
+
+  /**
    * Constructor
    */
   private TextUtils()
