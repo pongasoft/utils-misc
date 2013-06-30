@@ -320,6 +320,31 @@ def class FileSystemImpl implements FileSystem, Destroyable
     copyOrMove(from, to, 'move')
   }
 
+  private static def COPY_OR_MOVE_ACTIONS = [
+    copy: { Resource from, Resource to ->
+      // does not work for directories :(
+//      Files.copy(from.file.toPath(),
+//                 to.file.toPath(),
+//                 StandardCopyOption.COPY_ATTRIBUTES,
+//                 StandardCopyOption.REPLACE_EXISTING,
+//                 LinkOption.NOFOLLOW_LINKS)
+      AntUtils.withBuilder { ant ->
+        ant.exec(executable: 'cp', failonerror: true) {
+          arg(line: "-R ${from.file.canonicalPath} ${to.file.canonicalPath}")
+        }
+      }
+    },
+
+    move: { from, to ->
+      AntUtils.withBuilder { ant ->
+        ant.exec(executable: 'mv', failonerror: true) {
+          arg(line: "${from.file.canonicalPath} ${to.file.canonicalPath}")
+        }
+      }
+    },
+
+  ]
+
   /**
    * Copy or move... same code except ant action
    *
@@ -345,18 +370,6 @@ def class FileSystemImpl implements FileSystem, Destroyable
       // cp: foo4: Not a directory
       if(!toIsDirectory && to.exists())
         throw new NotDirectoryException(to.toString())
-
-      // to is an existent directory => copy inside directory
-      if(toIsDirectory)
-        to = to.createRelative(from.filename)
-
-      mkdirs(to.parentResource)
-
-      AntUtils.withBuilder { ant ->
-        ant."${antAction}"(overwrite: true, todir: to.file) {
-          fileset(dir: from.file)
-        }
-      }
     }
     else
     {
@@ -367,17 +380,15 @@ def class FileSystemImpl implements FileSystem, Destroyable
       // cp: directory foo8 does not exist
       if(toIsDirectory && !to.exists())
         throw new FileNotFoundException(to.toString())
-
-      // to is an existent directory => copy inside directory
-      if(toIsDirectory)
-        to = to.createRelative(from.filename)
-
-      mkdirs(to.parentResource)
-
-      AntUtils.withBuilder { ant ->
-        ant."${antAction}"(overwrite: true, file: from.file, tofile: to.file)
-      }
     }
+
+    // to is an existent directory => copy inside directory
+    if(toIsDirectory)
+      to = to.createRelative(from.filename)
+
+    mkdirs(to.parentResource)
+
+    COPY_OR_MOVE_ACTIONS[antAction](from, to)
 
     return to
   }

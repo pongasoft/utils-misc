@@ -21,6 +21,7 @@ package test.util.io.fs
 import org.linkedin.groovy.util.io.fs.FileSystemImpl
 import org.linkedin.util.io.resource.Resource
 
+import java.nio.file.Files
 import java.nio.file.NotDirectoryException
 
 /**
@@ -203,23 +204,37 @@ class TestFileSystem extends GroovyTestCase
     // if 'to' file does not exist => create it
     assertFalse(fs.toResource('/e/test2.txt').exists())
     def test2 = fs.cp(test1, '/e/test2.txt')
+    assertTrue(test1.exists())
     assertEquals('/e/test2.txt', test2.path)
     assertEquals('test1', test2.file.getText())
 
     // if 'to' file exist => overwrite it
     assertEquals('test3', fs.saveContent('/e/test3.txt', 'test3').file.text)
     def test3 = fs.cp(test1, '/e/test3.txt')
+    assertTrue(test1.exists())
     assertEquals('/e/test3.txt', test3.path)
     assertEquals('test1', test3.file.getText()) // overwritten
 
     // if 'to' dir does not exist => error
     shouldFail(FileNotFoundException) { fs.cp(test1, '/e/test4/') }
+    assertTrue(test1.exists())
 
     // if 'to' dir exists => copy file in dir
     fs.mkdirs('/e/test4')
     def test4 = fs.cp(test1, '/e/test4')
+    assertTrue(test1.exists())
     assertEquals('/e/test4/test1.txt', test4.path)
     assertEquals('test1', test4.file.getText())
+
+    // making test1 executable
+    test1.file.setExecutable(true)
+
+    assertFalse(fs.toResource('/e/test5.txt').exists())
+    def test5 = fs.cp(test1, '/e/test5.txt')
+    assertTrue(test1.exists())
+    assertEquals('/e/test5.txt', test5.path)
+    assertEquals('test1', test5.file.getText())
+    assertTrue(Files.isExecutable(test5.file.toPath()))
   }
 
   /**
@@ -230,13 +245,14 @@ class TestFileSystem extends GroovyTestCase
     // if 'from' dir does not exist => error all the time
     shouldFail(FileNotFoundException) { fs.cp('/a/b/c/', '/')}
 
-    fs.saveContent('/a/b/c/test1.txt', 'test1')
+    def test1 = fs.saveContent('/a/b/c/test1.txt', 'test1')
     def b = fs.toResource('/a/b')
     assertTrue(b.exists())
     assertTrue(b.isDirectory())
 
     // if 'to' does not exist => copy the entire content of the directory with the name of 'to'
     def test2 = fs.cp(b, '/e')
+    assertTrue(test1.exists())
     assertEquals('/e', test2.path)
     assertTrue(test2.isDirectory())
     assertEquals('test1', test2.createRelative('/c/test1.txt').file.text)
@@ -244,6 +260,7 @@ class TestFileSystem extends GroovyTestCase
     // if 'to' dir exists => copy inside to
     fs.mkdirs('/f')
     def test3 = fs.cp(b, '/f')
+    assertTrue(test1.exists())
     assertEquals('/f/b', test3.path)
     assertTrue(test3.isDirectory())
     assertEquals('test1', test3.createRelative('/c/test1.txt').file.text)
@@ -251,6 +268,17 @@ class TestFileSystem extends GroovyTestCase
     // if 'to' file exists => error
     fs.saveContent('g', 'g content')
     shouldFail(NotDirectoryException) { fs.cp(b, 'g')}
+    assertTrue(test1.exists())
+
+    // making test1 executable
+    test1.file.setExecutable(true)
+
+    def test4 = fs.cp(b, '/h')
+    assertTrue(test1.exists())
+    assertEquals('/h', test4.path)
+    assertTrue(test4.isDirectory())
+    assertEquals('test1', test4.createRelative('/c/test1.txt').file.text)
+    assertTrue(Files.isExecutable(test4.createRelative('/c/test1.txt').file.toPath()))
   }
 
   /**
@@ -266,21 +294,21 @@ class TestFileSystem extends GroovyTestCase
     // if 'to' file does not exist => create it
     assertFalse(fs.toResource('/e/test2.txt').exists())
     def test2 = fs.mv(test1, '/e/test2.txt')
+    assertFalse(test1.exists())
     assertEquals('/e/test2.txt', test2.path)
     assertEquals('test1', test2.file.getText())
 
     // restoring test1
-    assertFalse(test1.exists())
     fs.saveContent('/a/b/c/test1.txt', 'test1')
 
     // if 'to' file exist => overwrite it
     assertEquals('test3', fs.saveContent('/e/test3.txt', 'test3').file.text)
     def test3 = fs.mv(test1, '/e/test3.txt')
+    assertFalse(test1.exists())
     assertEquals('/e/test3.txt', test3.path)
     assertEquals('test1', test3.file.getText()) // overwritten
 
     // restoring test1
-    assertFalse(test1.exists())
     fs.saveContent('/a/b/c/test1.txt', 'test1')
 
     // if 'to' dir does not exist => error
@@ -293,12 +321,22 @@ class TestFileSystem extends GroovyTestCase
     // if 'to' dir exists => move file in dir
     fs.mkdirs('/e/test4')
     def test4 = fs.mv(test1, '/e/test4')
+    assertFalse(test1.exists())
     assertEquals('/e/test4/test1.txt', test4.path)
     assertEquals('test1', test4.file.getText())
 
     // restoring test1
-    assertFalse(test1.exists())
     fs.saveContent('/a/b/c/test1.txt', 'test1')
+
+    // making test1 executable
+    test1.file.setExecutable(true)
+
+    assertFalse(fs.toResource('/e/test5.txt').exists())
+    def test5 = fs.mv(test1, '/e/test5.txt')
+    assertFalse(test1.exists())
+    assertEquals('/e/test5.txt', test5.path)
+    assertEquals('test1', test5.file.getText())
+    assertTrue(Files.isExecutable(test5.file.toPath()))
   }
 
   /**
@@ -314,11 +352,16 @@ class TestFileSystem extends GroovyTestCase
     assertTrue(b.exists())
     assertTrue(b.isDirectory())
 
+    def test1x = fs.saveContent('/a/b/c/test1.sh', 'test1x')
+    test1x.file.setExecutable(true)
+
     // if 'to' does not exist => rename/move the entire content of the directory with the name of 'to'
     def test2 = fs.mv(b, '/e')
     assertEquals('/e', test2.path)
     assertTrue(test2.isDirectory())
     assertEquals('test1', test2.createRelative('/c/test1.txt').file.text)
+    assertEquals('test1x', test2.createRelative('/c/test1.sh').file.text)
+    assertTrue(Files.isExecutable(test2.createRelative('/c/test1.sh').file.toPath()))
 
     // restoring test1
     assertFalse(b.exists())
