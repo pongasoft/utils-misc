@@ -56,6 +56,9 @@ class SerializableFileResource implements Resource, Serializable
 
   static Resource[] toFRArray(Resource[] resources)
   {
+    if(resources == null)
+      return null
+
     def array = new Resource[resources.size()]
     resources.eachWithIndex { e, i ->
       array[i] = toFR(e)

@@ -29,6 +29,8 @@ import org.linkedin.groovy.util.ant.AntUtils
 import org.linkedin.groovy.util.lang.GroovyLangUtils
 
 import java.nio.file.Files
+import java.nio.file.NotDirectoryException
+import java.nio.file.Path
 
 /**
  * IO related utilities
@@ -230,7 +232,7 @@ class GroovyIOUtils extends IOUtils
   {
     def dirs = []
 
-    resource.list().each { Resource r ->
+    resource.list()?.each { Resource r ->
       closure(r)
       if(r.isDirectory())
         dirs << r
@@ -239,18 +241,6 @@ class GroovyIOUtils extends IOUtils
     dirs.each { eachChildRecurse(it, closure) }
 
     return resource
-  }
-
-  /**
-   * Creates the directory and parents of the provided directory. Returns dir.
-   */
-  static File mkdirs(File dir)
-  {
-    if(dir && !dir.exists())
-    {
-      Files.createDirectories(dir.toPath())
-    }
-    return dir
   }
 
   /**
@@ -397,6 +387,18 @@ class GroovyIOUtils extends IOUtils
     {
       tempFile.delete()
     }
+  }
+
+  static void copy(Resource source, Resource target)
+  {
+
+  }
+
+  static void copyToDirectory(Resource source, Resource targetDirectory)
+  {
+    if(targetDirectory.exists() && !targetDirectory.isDirectory())
+      throw new NotDirectoryException(targetDirectory.toString())
+    mkdirs(targetDirectory.file)
   }
 
   protected GroovyIOUtils()

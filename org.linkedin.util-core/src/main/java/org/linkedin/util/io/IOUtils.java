@@ -29,6 +29,10 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.NotDirectoryException;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
 
 /**
  * @author ypujante@linkedin.com
@@ -307,7 +311,34 @@ public class IOUtils
     }
   }
 
-  
+  /**
+   * Creates the directory and parents of the provided directory. Returns dir.
+   */
+  public static File mkdirs(File dir, FileAttribute<?>... attrs) throws IOException
+  {
+    if(dir != null)
+      mkdirs(dir.toPath());
+
+    return dir;
+  }
+
+  /**
+   * Creates the directory and parents of the provided directory. Returns dir.
+   */
+  public static Path mkdirs(Path dir, FileAttribute<?>... attrs) throws IOException
+  {
+    if(dir != null)
+    {
+      if(!Files.exists(dir))
+        Files.createDirectories(dir);
+      else
+        if(!Files.isDirectory(dir))
+          throw new NotDirectoryException(dir.toString());
+    }
+
+    return dir;
+  }
+
   /**
    * Constructor
    */
