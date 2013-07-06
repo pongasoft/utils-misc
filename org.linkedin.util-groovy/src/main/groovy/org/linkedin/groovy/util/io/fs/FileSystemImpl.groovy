@@ -236,6 +236,30 @@ def class FileSystemImpl implements FileSystem, Destroyable
     return tempFile(null)
   }
 
+  public <T> T withTempFile(Closure<T> closure)
+  {
+    withTempFile(null, closure)
+  }
+
+  public <T> T withTempFile(def args, Closure<T> closure)
+  {
+    Resource r = tempFile(args)
+    try
+    {
+      closure(r)
+    }
+    finally
+    {
+      if(r.exists())
+      {
+        if(r.isDirectory())
+          rmdirs(r)
+        else
+          rm(r)
+      }
+    }
+  }
+
   /**
    * Creates a temp file:
    *
@@ -323,11 +347,6 @@ def class FileSystemImpl implements FileSystem, Destroyable
   private static def COPY_OR_MOVE_ACTIONS = [
     copy: { Resource from, Resource to ->
       // does not work for directories :(
-//      Files.copy(from.file.toPath(),
-//                 to.file.toPath(),
-//                 StandardCopyOption.COPY_ATTRIBUTES,
-//                 StandardCopyOption.REPLACE_EXISTING,
-//                 LinkOption.NOFOLLOW_LINKS)
       AntUtils.withBuilder { ant ->
         ant.exec(executable: 'cp', failonerror: true) {
           arg(line: "-R ${from.file.canonicalPath} ${to.file.canonicalPath}")

@@ -166,6 +166,23 @@ interface FileSystem
   Resource tempFile()
 
   /**
+   * Creates a temporary file for the duration of the closure which is provided with it
+   * as its argument (as a <code>Resource</code>)
+   *
+   * @param args {@see #tempFile(args)}
+   * @return whatever the closure returns
+   */
+  public <T> T withTempFile(def args, Closure<T> closure)
+
+  /**
+   * Creates a temporary file for the duration of the closure which is provided with it
+   * as its argument (as a <code>Resource</code>)
+   *
+   * @return whatever the closure returns
+   */
+  public <T> T withTempFile(Closure<T> closure)
+
+  /**
    * Create a temporary directory
    */
   Resource createTempDir()
