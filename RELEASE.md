@@ -1,3 +1,8 @@
+2.0.1 (2013/07/20)
+------------------
+* fixed [bug #1](https://github.com/pongasoft/utils-misc/issues/1): _FileSystem.cp / FileSystem.mv do not handle directories properly_
+* misc enhancements to `FileSystem`
+
 2.0.0 (2013/04/21)
 ------------------
 * use of `jdk1.7` (now required)
