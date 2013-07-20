@@ -17,6 +17,7 @@
 package test.util.collections
 
 import org.linkedin.groovy.util.collections.GroovyCollectionsUtils
+import org.linkedin.util.clock.Timespan
 
 /**
  * @author ypujante@linkedin.com */
@@ -97,6 +98,81 @@ class TestGroovyCollectionsUtils extends GroovyTestCase
         'k6[3]': 'v64'
     ]
 
-    assertTrue(GroovyCollectionsUtils.compareIgnoreType(expected, GroovyCollectionsUtils.flatten(src)))
+    assertTrue(GroovyCollectionsUtils.compareIgnoreType(expected,
+                                                        GroovyCollectionsUtils.flatten(src)))
+  }
+
+  /**
+   * Test when a handler is provided
+   */
+  public void testFlattenWithHandler()
+  {
+    def now = new Date()
+
+    def src =
+    [
+      k1: 'v1',
+      k2: Timespan.parse('3s'),
+      k3: now
+    ]
+
+    def handler = { o ->
+      if(o instanceof Timespan)
+        o.toString()
+      else
+        o
+    }
+
+    def expected = [
+      k1: 'v1',
+      k2: '3s',
+      k3: now
+    ]
+
+    assertTrue(GroovyCollectionsUtils.compareIgnoreType(expected,
+                                                        GroovyCollectionsUtils.flatten(src, handler)))
+
+    handler = { o ->
+      if(o instanceof Timespan)
+        o.toString()
+      else
+        if(o instanceof Date)
+          [Timespan.parse('1s'), 45, [k2: 3]]
+        else
+          o
+    }
+
+    expected = [
+      k1: 'v1',
+      k2: '3s',
+      'k3[0]': '1s',
+      'k3[1]': 45,
+      'k3[2].k2': 3
+    ]
+
+    assertTrue(GroovyCollectionsUtils.compareIgnoreType(expected,
+                                                        GroovyCollectionsUtils.flatten(src, handler)))
+
+    handler = { o ->
+      if(o instanceof Timespan)
+        o.toString()
+      else
+        if(o instanceof Date)
+          [ts1: Timespan.parse('1s'), ts2: 45, ts3: [k2: 3]]
+        else
+          o
+    }
+
+    expected = [
+      k1: 'v1',
+      k2: '3s',
+      'k3.ts1': '1s',
+      'k3.ts2': 45,
+      'k3.ts3.k2': 3
+    ]
+
+    assertTrue(GroovyCollectionsUtils.compareIgnoreType(expected,
+                                                        GroovyCollectionsUtils.flatten(src, handler)))
+
   }
 }

@@ -85,6 +85,13 @@ interface FileSystem
   void rmdirs(dir)
 
   /**
+   * Combines {@link #rm} and {@link #rmdirs(Object)}
+   *
+   * @param fileOrDir
+   */
+  void delete(fileOrDir)
+
+  /**
    * Remove all empty directories (that are children (recurisvely) of the provided directory).
    */
   void rmEmptyDirs(dir)

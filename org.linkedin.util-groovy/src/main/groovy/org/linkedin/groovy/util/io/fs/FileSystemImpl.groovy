@@ -92,6 +92,19 @@ def class FileSystemImpl implements FileSystem, Destroyable
     AntUtils.withBuilder { it.delete(dir: toFile(dir)) }
   }
 
+  @Override
+  void delete(fileOrDir)
+  {
+    File fod = toFile(fileOrDir)
+    if(fod.exists())
+    {
+      if(fod.isDirectory())
+        rmdirs(fod)
+      else
+        rm(fod)
+    }
+  }
+
   void rmEmptyDirs(dir)
   {
     dir = toResource(dir)
@@ -250,13 +263,7 @@ def class FileSystemImpl implements FileSystem, Destroyable
     }
     finally
     {
-      if(r.exists())
-      {
-        if(r.isDirectory())
-          rmdirs(r)
-        else
-          rm(r)
-      }
+      delete(r)
     }
   }
 

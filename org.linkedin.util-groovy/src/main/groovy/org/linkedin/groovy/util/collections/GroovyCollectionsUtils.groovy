@@ -175,14 +175,14 @@ class GroovyCollectionsUtils extends CollectionsUtils
    * <code>[a: 1, 'b[0]': 1, 'b[1]': 2, 'c.d': 1]</code>
    * @return a new map
    */
-  static Map flatten(Map map)
+  static Map flatten(Map map, Closure unknownTypeHandler = null)
   {
     if(map == null)
       return null
 
     Map flattenedMap = [:]
 
-    doFlatten(map, flattenedMap, '')
+    doFlatten(map, flattenedMap, '', unknownTypeHandler)
 
     return flattenedMap
   }
@@ -191,58 +191,78 @@ class GroovyCollectionsUtils extends CollectionsUtils
    * Same as {@link #flatten(Map)} but use <code>destMap</code> for the result
    * @return <code>destMap</code>
    */
-  static Map flatten(Map srcMap, Map destMap)
+  static Map flatten(Map srcMap, Map destMap, Closure unknownTypeHandler = null)
   {
     if(srcMap == null)
-      return
+      return destMap
 
-    doFlatten(srcMap, destMap, '')
+    doFlatten(srcMap, destMap, '', unknownTypeHandler)
 
     return destMap
   }
 
-  private static void doFlatten(Map map, def flattenedMap, String prefix)
+  /**
+   * Handle map
+   */
+  private static void doFlatten(Map map, Map flattenedMap, String prefix, Closure unknownTypeHandler)
   {
     map?.each { k, v ->
 
-      def key = prefix ? "${prefix}.${k}".toString() : k
+      String key = prefix ? "${prefix}.${k}".toString() : k?.toString()
 
       switch(v)
       {
-        case { v instanceof Map}:
-          doFlatten(v, flattenedMap, key)
+        case { v instanceof Map }:
+          doFlatten((Map) v, flattenedMap, key, unknownTypeHandler)
           break
 
-        case { v instanceof Collection}:
-          doFlatten(v, flattenedMap, key)
+        case { v instanceof Collection }:
+          doFlatten((Collection) v, flattenedMap, key, unknownTypeHandler)
           break
 
         default:
-          flattenedMap[key] = v
-
+          if(v != null && unknownTypeHandler)
+            doFlatten(unknownTypeHandler(v), flattenedMap, key, unknownTypeHandler)
+          else
+            flattenedMap[key] = v
       }
     }
   }
 
-  private static void doFlatten(Collection c, def flattenedMap, String prefix)
+  /**
+   * Handle collection
+   */
+  private static void doFlatten(Collection c, Map flattenedMap, String prefix, Closure unknownTypeHandler)
   {
     c?.eachWithIndex { e, idx ->
-      def key = "${prefix}[${idx}]".toString()
+
+      String key = "${prefix}[${idx}]".toString()
 
       switch(e)
       {
-        case { e instanceof Map}:
-          doFlatten(e, flattenedMap, key)
+        case { e instanceof Map }:
+          doFlatten((Map) e, flattenedMap, key, unknownTypeHandler)
           break
 
-        case { e instanceof Collection}:
-          doFlatten(e, flattenedMap, key)
+        case { e instanceof Collection }:
+          doFlatten((Collection) e, flattenedMap, key, unknownTypeHandler)
           break
 
         default:
-          flattenedMap[key] = e
+          if(e != null && unknownTypeHandler)
+            doFlatten(unknownTypeHandler(e), flattenedMap, key, unknownTypeHandler)
+          else
+            flattenedMap[key] = e
       }
     }
+  }
+
+  /**
+   * Handle object. Same api so that groovy runtime dispatching work properly
+   */
+  private static void doFlatten(Object o, Map flattenedMap, String prefix, Closure unknownTypeHandler)
+  {
+    flattenedMap[prefix] = o
   }
 }
 
