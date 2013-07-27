@@ -1,5 +1,6 @@
 /*
  * Copyright 2010-2010 LinkedIn, Inc
+ * Portions Copyright (c) 2013 Yan Pujante
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -31,7 +32,7 @@ class Config
 
   static String getOptionalString(config, String name, String defaultValue)
   {
-    def value = config?."${name}"
+    def value = doGetActualValue(config, name)
 
     if(value == null)
       value = defaultValue
@@ -41,7 +42,7 @@ class Config
 
   static boolean getOptionalBoolean(config, String name, boolean defaultValue)
   {
-    def value = config?."${name}"
+    def value = doGetActualValue(config, name)
 
     String param = value?.toString()?.toLowerCase()
 
@@ -66,11 +67,25 @@ class Config
 
   static int getOptionalInt(config, String name, int defaultValue)
   {
-    def value = config?."${name}"
+    def value = doGetActualValue(config, name)
 
     if(value == null)
       return defaultValue
     
     return value as int
+  }
+
+  /**
+   * Account for the fact that if config is a {@link ConfigObject} then a missing
+   * value is not <code>null</code> but another {@link ConfigObject}
+   */
+  private static def doGetActualValue(def config, String name)
+  {
+    def value = config?."${name}"
+
+    if(value instanceof ConfigObject)
+      value = null
+
+    return value
   }
 }

@@ -18,7 +18,7 @@
 spec = [
     name: 'utils-misc',
     group: 'org.pongasoft',
-    version: '2.0.1',
+    version: '2.0.2',
 
     versions: [
       groovy: '2.0.7',
