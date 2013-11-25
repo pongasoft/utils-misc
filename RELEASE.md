@@ -1,3 +1,8 @@
+2.0.2 (2013/11/25)
+------------------
+* fixed [bug #3](https://github.com/pongasoft/utils-misc/issues/3): _Resource framework improperly handles space in file names_
+* use of `gradle `1.9`
+
 2.0.1 (2013/07/20)
 ------------------
 * fixed [bug #1](https://github.com/pongasoft/utils-misc/issues/1): _FileSystem.cp / FileSystem.mv do not handle directories properly_

@@ -29,11 +29,14 @@ allRepositories.build = {
     layout 'maven'
   }
 
-  mavenRepo name: 'build-publish', url: topPublishDir.toURI()
+  maven {
+    name 'build-publish'
+    url topPublishDir.toURI()
+  }
 
   mavenCentral()
 
-  bintray.jcenter()
+  jcenter()
 }
 
 /**
