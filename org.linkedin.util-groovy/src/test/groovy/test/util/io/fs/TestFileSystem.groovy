@@ -533,4 +533,17 @@ class TestFileSystem extends GroovyTestCase
     assertEquals("a-content", btxt.file.text)
 
   }
+
+  public void testSaveContent()
+  {
+    def topdir = fs.mkdirs('/topdir')
+
+    def f = topdir.'abc%20def'
+
+    assertEquals('abc def', f.file.name)
+
+    f = fs.saveContent(f, '12345')
+
+    assertEquals('abc def', f.file.name)
+  }
 }

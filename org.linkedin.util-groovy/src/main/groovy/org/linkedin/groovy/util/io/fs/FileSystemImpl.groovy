@@ -502,12 +502,7 @@ def class FileSystemImpl implements FileSystem, Destroyable
 
   private def computePath(File file)
   {
-    // bug with weird character...
-    def path = file.path
-    if(path == '/')
-      return path
-    path = path.split('/').collect { URLEncoder.encode(it, 'UTF-8') }.join('/')
-    return path
+    new URI(null, null, file.path, null).rawPath
   }
 
   /**
