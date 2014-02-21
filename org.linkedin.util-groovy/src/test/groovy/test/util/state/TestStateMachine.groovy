@@ -1,5 +1,6 @@
 /*
  * Copyright 2010-2010 LinkedIn, Inc
+ * Portions Copyright (c) 2014 Yan Pujante
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,6 +17,8 @@
 
 
 package test.util.state
+
+import org.linkedin.util.clock.Chronos
 
 import java.util.concurrent.Callable
 import org.linkedin.groovy.util.state.StateMachine
@@ -402,10 +405,31 @@ def class TestStateMachine extends GroovyTestCase
     future.get()
     assertEquals(7, states.size())
 
+    // we make sure that the waitForState calls get awaken properly (issue utils-misc#4)
+    future = ThreadPerTaskExecutor.execute(
+      {
+        Chronos c = new Chronos()
+        synchronized(sm.lock)
+        {
+          // we make sure that the forceChangeState call happens only after waitForState is called...
+          // hence the synchronization on the state machine internal lock: note that waitForState
+          // will release the lock...
+          tc.block('s2')
+          assertTrue(sm.waitForState('installed', '10s'))
+          return c.totalTime
+        }
+      }
+      as Callable);
+
+    // make sure that the following call only executes when waitForState release the (sm) lock
+    tc.unblock('s2')
+
     // once the transition is over it should work
     sm.forceChangeState('installed', null)
     checkState([currentState: 'installed'])
     assertEquals(8, states.size())
+    // we make sure that the future completes successfully in (a lot) less time than requested
+    assertTrue(future.get() < 1500)
 
     sm.forceChangeState('installed', 'this is an error')
     checkState([currentState: 'installed', error: 'this is an error'])

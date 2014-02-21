@@ -1,5 +1,6 @@
 /*
  * Copyright 2010-2010 LinkedIn, Inc
+ * Portions Copyright (c) 2014 Yan Pujante
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -320,30 +321,23 @@ def class StateMachineImpl implements StateMachine
 
     synchronized(lock)
     {
-      try
+      if(res.error)
       {
-        if(res.error)
-        {
-          changeState {
-            _transitionState = null
-            _transitionAction = null
-            _error = res.error
-          }
-          throw res.error
+        changeState {
+          _transitionState = null
+          _transitionAction = null
+          _error = res.error
         }
-        else
-        {
-          changeState {
-            _transitionState = null
-            _transitionAction = null
-            _currentState = endState
-          }
-          return res.result
-        }
+        throw res.error
       }
-      finally
+      else
       {
-        lock.notifyAll()
+        changeState {
+          _transitionState = null
+          _transitionAction = null
+          _currentState = endState
+        }
+        return res.result
       }
     }
   }
@@ -549,21 +543,28 @@ def class StateMachineImpl implements StateMachine
 
   private def changeState(closure)
   {
-    if(_stateChangeListener)
+    try
     {
-      def oldState = getState()
-      closure()
-      def newState = getState()
-      if(oldState != newState)
+      if(_stateChangeListener)
       {
-        GroovyLangUtils.noException {
-          _stateChangeListener.onStateChange(oldState, newState)
+        def oldState = getState()
+        closure()
+        def newState = getState()
+        if(oldState != newState)
+        {
+          GroovyLangUtils.noException {
+            _stateChangeListener.onStateChange(oldState, newState)
+          }
         }
       }
+      else
+      {
+        closure()
+      }
     }
-    else
+    finally
     {
-      closure()
+      lock.notifyAll()
     }
   }
 }

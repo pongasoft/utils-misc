@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010-2010 LinkedIn, Inc
- * Portions Copyright (c) 2011-2013 Yan Pujante
+ * Portions Copyright (c) 2011-2014 Yan Pujante
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,7 +18,7 @@
 spec = [
     name: 'utils-misc',
     group: 'org.pongasoft',
-    version: '2.0.2',
+    version: '2.0.3',
 
     versions: [
       groovy: '2.0.7',
