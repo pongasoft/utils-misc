@@ -1,8 +1,12 @@
+2.x.y (yyyy/mm/dd)
+------------------
+* fixed [bug #4](https://github.com/pongasoft/utils-misc/issues/4): _StateMachineImpl.forceChangeState does not call notifyAll_
+
 2.0.2 (2013/11/25)
 ------------------
 * fixed [bug #2](https://github.com/pongasoft/utils-misc/issues/2): _Config should handle ConfigObject properly_
 * fixed [bug #3](https://github.com/pongasoft/utils-misc/issues/3): _Resource framework improperly handles space in file names_
-* use of `gradle `1.9`
+* use of `gradle 1.9`
 
 2.0.1 (2013/07/20)
 ------------------
