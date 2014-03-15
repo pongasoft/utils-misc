@@ -1,4 +1,4 @@
-2.x.y (yyyy/mm/dd)
+2.0.3 (2014/03/14)
 ------------------
 * fixed [bug #4](https://github.com/pongasoft/utils-misc/issues/4): _StateMachineImpl.forceChangeState does not call notifyAll_
 
