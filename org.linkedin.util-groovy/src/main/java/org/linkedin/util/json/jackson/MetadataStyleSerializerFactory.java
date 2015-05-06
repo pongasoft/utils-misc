@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2013 Yan Pujante
+ * Copyright (c) 2012-2015 Yan Pujante
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.cfg.SerializerFactoryConfig;
 import com.fasterxml.jackson.databind.module.SimpleSerializers;
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
 import com.fasterxml.jackson.databind.ser.std.BooleanSerializer;
+import com.fasterxml.jackson.databind.ser.std.NumberSerializer;
 import com.fasterxml.jackson.databind.ser.std.NumberSerializers;
 import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -53,8 +54,6 @@ public class MetadataStyleSerializerFactory extends BeanSerializerFactory
       new NumberSerializers.IntLikeSerializer();
     NumberSerializers.IntegerSerializer integerSerializer =
       new NumberSerializers.IntegerSerializer();
-    NumberSerializers.NumberSerializer numberSerializer =
-      new NumberSerializers.NumberSerializer();
     NumberSerializers.LongSerializer longSerializer =
       new NumberSerializers.LongSerializer();
     NumberSerializers.FloatSerializer floatSerializer =
@@ -81,7 +80,7 @@ public class MetadataStyleSerializerFactory extends BeanSerializerFactory
     // int
     SERIALIZERS.put(int.class.getName(), integerSerializer);
     SERIALIZERS.put(Integer.class.getName(), integerSerializer);
-    SERIALIZERS.put(BigInteger.class.getName(), numberSerializer);
+    SERIALIZERS.put(BigInteger.class.getName(), new NumberSerializer(BigInteger.class));
 
     // long
     SERIALIZERS.put(long.class.getName(), longSerializer);
@@ -94,7 +93,7 @@ public class MetadataStyleSerializerFactory extends BeanSerializerFactory
     // double
     SERIALIZERS.put(double.class.getName(), doubleSerializer);
     SERIALIZERS.put(Double.class.getName(), doubleSerializer);
-    SERIALIZERS.put(BigDecimal.class.getName(), numberSerializer);
+    SERIALIZERS.put(BigDecimal.class.getName(), new NumberSerializer(BigDecimal.class));
 
     // String
     SERIALIZERS.put(String.class.getName(), new StringSerializer());

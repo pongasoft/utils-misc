@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Yan Pujante
+ * Copyright (c) 2012-2015 Yan Pujante
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,6 +17,7 @@ package org.linkedin.util.json.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.PrettyPrinter;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ import java.io.IOException;
 public class JacksonPrettyPrinter implements PrettyPrinter
 {
   public static final DefaultPrettyPrinter.Indenter LF_2_SPACES_INDENTER =
-    new DefaultPrettyPrinter.Lf2SpacesIndenter();
+    DefaultIndenter.SYSTEM_LINEFEED_INSTANCE;
 
   private final DefaultPrettyPrinter.Indenter _indenter;
   private int _nesting = 0;

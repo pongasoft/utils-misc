@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010-2010 LinkedIn, Inc
- * Portions Copyright (c) 2011-2014 Yan Pujante
+ * Portions Copyright (c) 2011-2015 Yan Pujante
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,13 +18,13 @@
 spec = [
     name: 'utils-misc',
     group: 'org.pongasoft',
-    version: '2.0.3',
+    version: '2.1.0',
 
     versions: [
-      groovy: '2.0.7',
-      jackson: '2.1.4',
+      groovy: '2.4.3',
+      jackson: '2.5.3',
       jdk: '1.7',
-      slf4j: '1.6.2' // to be compatible with grails 2.2.1
+      slf4j: '1.7.10' // to be compatible with grails 2.5.0
     ],
 
   // information about the build framework itself
@@ -44,13 +44,13 @@ spec.scm = 'git'
  * External dependencies
  */
 spec.external = [
-  ant: 'org.apache.ant:ant:1.8.2',
+  ant: 'org.apache.ant:ant:1.9.4',
   groovy: "org.codehaus.groovy:groovy-all:${spec.versions.groovy}",
-  json: 'org.json:json:20090211',
+  json: 'org.json:json:20140107',
   jacksoncore: "com.fasterxml.jackson.core:jackson-core:${spec.versions.jackson}",
   jacksondatabind: "com.fasterxml.jackson.core:jackson-databind:${spec.versions.jackson}",
-  junit: 'junit:junit:4.10',
-  log4j: 'log4j:log4j:1.2.16',
+  junit: 'junit:junit:4.12',
+  log4j: 'log4j:log4j:1.2.17',
   slf4j: "org.slf4j:slf4j-api:${spec.versions.slf4j}",
   slf4jLog4j: "org.slf4j:slf4j-log4j12:${spec.versions.slf4j}",
   slf4jJul: "org.slf4j:jul-to-slf4j:${spec.versions.slf4j}"

@@ -1,5 +1,6 @@
 /*
  * Copyright 2010-2010 LinkedIn, Inc
+ * Portions Copyright (c) 2015 Yan Pujante
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -71,8 +72,8 @@ class GroovyCollectionsUtils extends CollectionsUtils
     if(set1.size() != set2?.size())
       return false
 
-    return compareIgnoreType(set1.sort(IgnoreTypeComparator.INSTANCE),
-                             set2.sort(IgnoreTypeComparator.INSTANCE))
+    return compareIgnoreType(set1.sort(false, IgnoreTypeComparator.INSTANCE),
+                             set2.sort(false, IgnoreTypeComparator.INSTANCE))
   }
 
   /**
