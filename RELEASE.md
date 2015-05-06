@@ -1,3 +1,18 @@
+2.1.0 (2015/05/06)
+------------------
+* Upgraded (direct) dependencies to more recent versions
+
+  * gradle 2.3 (was 1.11)
+  * gradle-plugins: 2.2.8 (was 2.2.6)
+  * groovy: 2.4.3 (was 2.0.7)
+  * jackson: 2.5.3 (was 2.1.4)
+  * slf4j: 1.7.10 (was 1.6.2)
+  * ant: 1.9.4 (was 1.8.2)
+  * json: 20140107 (was 20090211)
+  * junit: 4.12 (was 4.10)
+  * log4j: 1.2.17 (was 1.2.16)
+
+
 2.0.3 (2014/03/14)
 ------------------
 * fixed [bug #4](https://github.com/pongasoft/utils-misc/issues/4): _StateMachineImpl.forceChangeState does not call notifyAll_
