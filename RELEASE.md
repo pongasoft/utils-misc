@@ -1,6 +1,6 @@
 3.0.0 (2021/04/27)
 ------------------
-* Use of gradle-plugins 3.0.0:
+* Use of gradle-plugins 3.0.1:
   * removed jcenter
   * introduced `publishing.gradle`
   * gradle 6.8

@@ -40,7 +40,7 @@ buildscript {
  }
 
   dependencies {
-    classpath 'org.pongasoft:org.pongasoft.gradle-plugins:3.0.0'
+    classpath 'org.pongasoft:org.pongasoft.gradle-plugins:3.0.1'
   }
 }
 
