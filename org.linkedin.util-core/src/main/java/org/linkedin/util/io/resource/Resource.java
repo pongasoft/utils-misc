@@ -60,7 +60,7 @@ public interface Resource
    * </li>
    * <li>
    * <code>createRelative("/")</code> will add a trailing / to the path if there isn't already 
-   * one</code>
+   * one
    * </li>
    * <li>
    * <code>createRelative("") == createRelative(".") == createRelative("./") == this</code>

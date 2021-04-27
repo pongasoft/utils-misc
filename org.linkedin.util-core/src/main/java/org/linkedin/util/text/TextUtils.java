@@ -106,7 +106,7 @@ public class TextUtils
    *
    * @param sb a StringBuilder to append to
    * @param s the original string
-   * @param quote the quote used to surround the string (=> needs to be escaped)
+   * @param quote the quote used to surround the string (needs to be escaped)
    * */
   public static void stringToString(StringBuilder sb, String s, char quote)
   {

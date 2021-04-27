@@ -53,8 +53,8 @@ public class XMLUtils
 
   /**
    * Encodes the string so that it is XML safe: converts &lt;, &gt; &amp;
-   * &apos; into their equivalent (&amp;lt;, &amp;gt; &amp;amp;
-   * &amp;apos;)
+   * &quot; into their equivalent (&amp;lt;, &amp;gt; &amp;amp;
+   * &amp;quot;)
    *
    * @param original the string to encode
    * @return the encoded string */
@@ -97,8 +97,8 @@ public class XMLUtils
 
   /**
    * Encodes the string so that it is XML safe: all characters &lt;= 127
-   * will not be encoded (converts &lt;, &gt; &amp; &apos; into their
-   * equivalent (&amp;lt;, &amp;gt; &amp;amp; &amp;apos;)). All characters
+   * will not be encoded (converts &lt;, &gt; &amp; &quot; into their
+   * equivalent (&amp;lt;, &amp;gt; &amp;amp; &amp;quot;)). All characters
    * &gt; 127 will be encoded as &amp;#xxxx; with xxxx the hexadecimal
    * value of the character. This method differs from
    * <code>xmlEncode</code> because it encodes all values &gt; 127 into a

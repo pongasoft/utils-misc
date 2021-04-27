@@ -151,7 +151,7 @@ public class ConcurrentUtils
    * Joins on the thread but if end time is expired then throws an exception.
    *
    * @param thread the thread to join on
-   * @param timeout how long to join for (<code>null</code> or <= 0 means forever)
+   * @param timeout how long to join for (<code>null</code> or &lt;= 0 means forever)
    * @throws InterruptedException if the thread is interrupted while waiting
    * @throws TimeoutException if the time has been reached
    */

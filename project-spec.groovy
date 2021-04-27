@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010-2010 LinkedIn, Inc
- * Portions Copyright (c) 2011-2015 Yan Pujante
+ * Portions Copyright (c) 2011-2021 Yan Pujante
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,12 +18,12 @@
 spec = [
     name: 'utils-misc',
     group: 'org.pongasoft',
-    version: '2.1.0',
+    version: '3.0.0',
 
     versions: [
       groovy: '2.4.3',
       jackson: '2.5.3',
-      jdk: '1.7',
+      jdk: '8',
       slf4j: '1.7.10' // to be compatible with grails 2.5.0
     ],
 
@@ -55,17 +55,3 @@ spec.external = [
   slf4jLog4j: "org.slf4j:slf4j-log4j12:${spec.versions.slf4j}",
   slf4jJul: "org.slf4j:jul-to-slf4j:${spec.versions.slf4j}"
 ]
-
-// information about the bintray distribution
-spec.bintray = [
-  apiBaseUrl: 'https://bintray.com/api/v1',
-  username: 'yan',
-  pkgOrganization: 'pongasoft',
-  repositories: [
-    binaries: [
-      pkgRepository: 'binaries',
-      pkgName: spec.name
-    ],
-  ]
-]
-

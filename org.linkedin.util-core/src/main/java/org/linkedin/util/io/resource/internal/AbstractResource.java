@@ -94,7 +94,7 @@ public abstract class AbstractResource implements InternalResource
    * </li>
    * <li>
    * <code>createRelative("/")</code> will add a trailing / to the path if there isn't already
-   * one</code>
+   * one
    * </li>
    * <li>
    * <code>createRelative("") == createRelative(".") == createRelative("./") == this</code>
@@ -251,7 +251,7 @@ public abstract class AbstractResource implements InternalResource
    * returns a string that "textually represents" this object. The result should be a concise but
    * informative representation that is easy for a person to read. It is recommended that all
    * subclasses override this method.
-   * <p/>
+   * <p>
    * The <code>toString</code> method for class <code>Object</code> returns a string consisting of
    * the name of the class of which the object is an instance, the at-sign character
    * `<code>@</code>', and the unsigned hexadecimal representation of the hash code of the object.

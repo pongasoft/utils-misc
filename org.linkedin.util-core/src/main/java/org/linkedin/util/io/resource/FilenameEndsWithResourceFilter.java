@@ -41,7 +41,6 @@ public class FilenameEndsWithResourceFilter implements ResourceFilter
    *
    * @param resource the resource to check
    * @return <code>true</code> if the resource should be included
-   * @throws IOException
    */
   @Override
   public boolean accept(Resource resource)

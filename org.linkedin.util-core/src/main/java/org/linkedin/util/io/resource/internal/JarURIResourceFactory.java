@@ -52,7 +52,6 @@ public class JarURIResourceFactory extends SchemeURIResourceFactory
    * @param uri
    * @param parent the parent resource factory
    * @return the resource
-   * @throws IOException if there is a problem creating the resource
    */
   @Override
   protected Resource doCreateResource(URI uri, URIResourceFactory parent)

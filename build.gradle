@@ -1,6 +1,6 @@
 /*
  * Copyright 2010-2010 LinkedIn, Inc
- * Portions Copyright (c) 2013-2015 Yan Pujante
+ * Portions Copyright (c) 2013-2021 Yan Pujante
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -32,14 +32,6 @@ buildscript {
       }
     }
 
-   // if you want to disallow jcenter
-   if(project.properties['no.jcenter'] != 'true')
-   {
-     maven {
-       url 'http://jcenter.bintray.com'
-     }
-   }
-
    // if you want to disallow maven central
    if(project.properties['no.maven.central'] != 'true')
    {
@@ -48,46 +40,37 @@ buildscript {
  }
 
   dependencies {
-    classpath 'org.pongasoft:org.linkedin.gradle-plugins:2.2.8'
+    classpath 'org.pongasoft:org.pongasoft.gradle-plugins:3.0.0'
   }
 }
 
-apply plugin: 'org.linkedin.userConfig'
-apply plugin: 'org.linkedin.spec'
+apply plugin: 'org.pongasoft.userConfig'
+apply plugin: 'org.pongasoft.spec'
 
 ext {
   topBuildDir = userConfig.top.build.dir ?: "${rootDir}/out/build"
 }
 
 allprojects {
-  apply plugin: 'idea'
   group = spec.group
   version = spec.version
 }
 
-// we use git
-idea.project {
-  jdkName = spec.versions.jdk
-  languageLevel = spec.versions.jdk
-  ipr.withXml { root ->
-    root.asNode().component.find { it.@name == 'VcsDirectoryMappings' }.mapping.@vcs = 'Git'
-  }
-}
-
 subprojects {
-  apply plugin: 'org.linkedin.repository'
+  apply plugin: 'org.pongasoft.externalRepositories'
+  apply plugin: 'org.pongasoft.externalPublishing'
+  apply plugin: 'org.pongasoft.release'
+  apply plugin: 'org.pongasoft.signing'
 
   apply plugin: 'java'
-  apply plugin: 'maven'
 
-  allRepositories.build.configure()
+  externalRepositories.build.configure()
 
-  sourceCompatibility = spec.versions.jdk
-  targetCompatibility = spec.versions.jdk
+  java {
+    toolchain {
+      languageVersion = JavaLanguageVersion.of(spec.versions.jdk)
+    }
+  }
 
   buildDir = "${topBuildDir}${project.path.replace(':','/')}".toString()
-}
-
-task wrapper(type: Wrapper) {
-  gradleVersion = '2.3'
 }

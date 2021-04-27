@@ -46,7 +46,7 @@ public class StringSplitter
   /**
    * Constructor. This one takes another character that will be used to
    * ignore delim. For example:
-   * <code>"param1=value1&param2='toto=3'&param3=value3"</code>. In this
+   * <code>"param1=value1&amp;param2='toto=3'&amp;param3=value3"</code>. In this
    * string the delimiter <code>=</code> should be ignored within the block
    * delimited by <code>'</code>.
    *
@@ -60,7 +60,7 @@ public class StringSplitter
   /**
    * Constructor. This one takes another character that will be used to
    * ignore delim. For example:
-   * <code>"param1=value1&param2='toto=3'&param3=value3"</code>. In this
+   * <code>"param1=value1&amp;param2='toto=3'&amp;param3=value3"</code>. In this
    * string the delimiter <code>=</code> should be ignored within the block
    * delimited by <code>'</code>.
    *

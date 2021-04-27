@@ -277,10 +277,10 @@ public class MemorySize implements Comparable<MemorySize>, Serializable
   
   /**
    * Return a string representation of this instance using the given units
-   * E.g. 2g3m4k given units g/m -> "2g3m"
-   *      2g3m4k given units g/k -> "2g3076k"
-   *        3m4k given units t/g -> "0g"
-   *        2g3m given units k/b -> "2100224k"
+   * E.g. 2g3m4k given units g/m -&gt; "2g3m"
+   *      2g3m4k given units g/k -&gt; "2g3076k"
+   *        3m4k given units t/g -&gt; "0g"
+   *        2g3m given units k/b -&gt; "2100224k"
    * 
    * @param sizeUnits the sizeUnits you want in the decomposition
    * @return a string representation of this instance using the given units.
@@ -295,10 +295,10 @@ public class MemorySize implements Comparable<MemorySize>, Serializable
   
   /**
    * Return a string representation of this instance using the given units
-   * E.g. 2g3m4k given units g/m -> "2g3m"
-   *      2g3m4k given units g/k -> "2g3076k"
-   *        3m4k given units t/g -> "0g"
-   *        2g3m given units k/b -> "2100224k"
+   * E.g. 2g3m4k given units g/m -&gt; "2g3m"
+   *      2g3m4k given units g/k -&gt; "2g3076k"
+   *        3m4k given units t/g -&gt; "0g"
+   *        2g3m given units k/b -&gt; "2100224k"
    * 
    * @param sizeUnits the sizeUnits you want in the decomposition
    * @return a string representation of this instance using the given units.

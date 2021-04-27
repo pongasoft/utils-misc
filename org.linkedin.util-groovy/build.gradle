@@ -1,6 +1,6 @@
 /*
  * Copyright 2010-2010 LinkedIn, Inc
- * Portions Copyright 2012-2013 Yan Pujante
+ * Portions Copyright 2012-2021 Yan Pujante
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,19 +16,18 @@
  */
 
 apply plugin: 'groovy'
-apply plugin: 'org.linkedin.release'
 
 dependencies {
-  compile project(':org.linkedin.util-core')
-  compile spec.external.ant
-  compile spec.external.slf4j
-  compile spec.external.slf4jJul
-  compile spec.external.log4j
-  compile spec.external.json
-  compile spec.external.jacksoncore
-  compile spec.external.jacksondatabind
-  compile spec.external.groovy
+  implementation project(':org.linkedin.util-core')
+  implementation spec.external.ant
+  implementation spec.external.slf4j
+  implementation spec.external.slf4jJul
+  implementation spec.external.log4j
+  implementation spec.external.json
+  implementation spec.external.jacksoncore
+  implementation spec.external.jacksondatabind
+  implementation spec.external.groovy
 
-  testCompile spec.external.junit
-  testRuntime spec.external.slf4jLog4j
+  testImplementation spec.external.junit
+  testRuntimeOnly spec.external.slf4jLog4j
 }

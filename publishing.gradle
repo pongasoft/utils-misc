@@ -1,0 +1,87 @@
+/*
+ * Copyright (c) 2021 Yan Pujante
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+apply plugin: 'org.pongasoft.sonatypePublishing'
+apply plugin: 'ivy-publish'
+
+def topReleaseDir = new File(userConfig.top.release.dir ?: "${topBuildDir}/release").canonicalFile
+
+// for local release we use ivy
+if (releaseType.isLocal) {
+  publishing {
+
+    // publications
+    publications {
+      release(IvyPublication) {
+        // empty on purpose (release plugin fills it)
+      }
+    }
+
+    // repositories
+    repositories {
+      ivy {
+        name = "release"
+        url = topReleaseDir
+        layout 'maven'
+      }
+    }
+  }
+} else {
+  // for remote release we publish to maven central
+  publishing {
+
+    // publications
+    publications {
+      release(MavenPublication) {
+        pom {
+          name = project.rootProject.name
+          description = 'Miscellaneous utilities used by other projects'
+          url = 'http://github.com/pongasoft/utils-misc'
+          licenses {
+            license {
+              name = 'The Apache Software License, Version 2.0'
+              url = 'http://www.apache.org/licenses/LICENSE-2.0'
+            }
+          }
+          developers {
+            developer {
+              id = 'ypujante'
+              name = 'Yan Pujante'
+              email = 'yan@pongasoft.com'
+            }
+          }
+          scm {
+            connection = "scm:git:${spec.scmUrl}"
+            developerConnection = "scm:git:${spec.scmUrl}"
+            url = spec.scmUrl
+          }
+        }
+      }
+    }
+
+    // repositories
+    repositories {
+      maven {
+        name = "release"
+        url = sonatype.s01.conditionedOn(releaseType)
+        credentials {
+          username = sonatype.username
+          password = sonatype.password
+        }
+      }
+    }
+  }
+}

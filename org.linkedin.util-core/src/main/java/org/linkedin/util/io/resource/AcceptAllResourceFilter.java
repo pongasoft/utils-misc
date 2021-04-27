@@ -23,7 +23,7 @@ package org.linkedin.util.io.resource;
 public class AcceptAllResourceFilter implements ResourceFilter
 {
   /**
-   * Stateless => can share an instance
+   * Stateless so can share an instance
    */
   public static final AcceptAllResourceFilter INSTANCE = new AcceptAllResourceFilter();
 

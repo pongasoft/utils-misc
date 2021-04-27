@@ -42,7 +42,7 @@ public abstract class AbstractResourceProvider implements InternalResourceProvid
   /**
    * The path to the resource is absolute. Whether it starts with / or not it will be made
    * absolute.
-   * <p/>
+   * <p>
    * Note that it follows the same convention as {@link File} class in the sense that a resource
    * simply represents a handle and does not imply that the resource exists.
    *

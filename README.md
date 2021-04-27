@@ -7,7 +7,7 @@ Compilation
 ===========
 In order to compile the code you need
 
-* java 1.7+
+* java 1.8+
 
 At the top simply run
 

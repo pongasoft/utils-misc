@@ -80,7 +80,6 @@ public class RAMResourceProvider extends PathBasedResourceProvider
    * @param path   the path to the resource
    * @param filter the filter to include only some resources in the result
    * @return <code>true</code> if it was a directory, <code>false</code> otherwise
-   * @throws IOException if there is an error accessing the resource
    */
   @Override
   public boolean doList(String path, ResourceFilter filter)
