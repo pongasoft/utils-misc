@@ -1,3 +1,7 @@
+3.0.1 (2021/04/30)
+------------------
+* Use of gradle-plugins 3.0.2 to fix missing dependencies in release pom
+
 3.0.0 (2021/04/27)
 ------------------
 * Use of gradle-plugins 3.0.1:
